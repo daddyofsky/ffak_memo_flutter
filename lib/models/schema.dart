@@ -9,6 +9,7 @@ class Schema {
       CREATE TABLE ffak_memo (
         memo_id integer primary key,
         memo_status integer NOT NULL DEFAULT '1',
+        memo_password text NOT NULL DEFAULT '',
         memo_content text NOT NULL DEFAULT '',
         memo_ctime integer NOT NULL DEFAULT 0,
         memo_mtime integer NOT NULL DEFAULT 0

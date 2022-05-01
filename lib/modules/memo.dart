@@ -85,6 +85,7 @@ class MemoModule {
     debug('addMemo :', memo);
 
     var id = await db.insert(memo);
+    debug('addMemo :', id);
     memo['memo_id'] = id;
     memoList.insert(0, MemoItem(memo));
   }
@@ -98,6 +99,7 @@ class MemoModule {
     await db.update(data, ['memo_id = ?', memo.memoId]);
 
     index ??= memoList.indexWhere((element) => element.memoId == memo.memoId);
+    debug('modifyMemo :', memo.memoId, index);
     if (index >= 0) {
       memoList[index].memoContent = memo.memoContent;
       memoList[index].memoTime = now;
@@ -108,6 +110,7 @@ class MemoModule {
     await db.delete(['memo_id = ?', memo.memoId]);
 
     index ??= memoList.indexWhere((element) => element.memoId == memo.memoId);
+    debug('deleteMemo :', memo.memoId, index);
     if (index >= 0) {
       memoList.removeAt(index);
     }

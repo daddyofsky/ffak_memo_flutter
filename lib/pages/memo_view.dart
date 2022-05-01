@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../library/common.dart';
@@ -21,6 +22,13 @@ class MemoViewPage extends StatefulWidget {
 class _MemoViewPageState extends State<MemoViewPage> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
 
+
+  @override
+  initState() {
+    super.initState();
+    debug('view :', widget.memo.memoId);
+  }
+
   enterMemoForm() async {
     debug('blue:>>>>>', 'MemoView', '--->', 'red:MemoForm');
     Common.pushPage(MemoFormPage(memo: widget.memo), context: context).then((memo) {
@@ -36,6 +44,25 @@ class _MemoViewPageState extends State<MemoViewPage> {
       appBar: AppBar(
         title: const Text('메모 보기'),
         centerTitle: true,
+        actions: [
+          IconButton(onPressed: () {
+            if (widget.memo.memoPassword.isNotEmpty) {
+              setState(() {
+                widget.memo.memoPassword = '';
+              });
+              widget.onModify(widget.memo);
+            } else {
+              Common.confirmPassword('잠금 비밀번호를 입력해주십시오.', context: context).then((password) {
+                if (password != null && password.isNotEmpty) {
+                  setState(() {
+                    widget.memo.memoPassword = Common.md5(password);
+                  });
+                  widget.onModify(widget.memo);
+                }
+              });
+            }
+          }, icon: Icon(widget.memo.memoPassword.isNotEmpty ? CupertinoIcons.lock : CupertinoIcons.lock_open))
+        ],
       ),
       body: SafeArea(
         child: Container(

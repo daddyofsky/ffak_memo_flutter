@@ -18,6 +18,7 @@ class Common {
 
   static initResource() {
     initDateFormatLocale('ko');
+    initLoading();
   }
 
   static initDateFormatLocale([String locale = 'ko']) {
@@ -79,6 +80,42 @@ class Common {
           ],
         )
     );
+  }
+
+  static Future confirmPassword(String text, {String? title, String ok = '확인', String cancel = '취소', BuildContext? context}) async {
+    final textEditingController = TextEditingController();
+    textEditingController.text = '';
+
+    return showDialog(
+        context: context ?? navigatorKey.currentContext!,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(text),
+            content: TextFormField(
+              controller: textEditingController,
+              decoration: InputDecoration(hintText: '비밀번호를 입력해주십시오.'),
+              // maxLength: 30,
+              obscureText: true,
+            ),
+            actions: [
+              TextButton(
+                child: Text(cancel),
+                onPressed: () {
+                  Common.popPage(context, ''); // dismiss dialog and return ''
+                },
+              ),
+              TextButton(
+                child: Text(ok),
+                onPressed: () {
+                  var password = textEditingController.text.trim();
+                  if (password.isNotEmpty) {
+                    Common.popPage(context, password); // dismiss dialog and return password
+                  }
+                },
+              ),
+            ],
+          );
+        });
   }
 
   static toast(String text, {int delay = 3000}) {

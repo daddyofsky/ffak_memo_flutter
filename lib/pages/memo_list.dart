@@ -88,9 +88,7 @@ class _MemoListPageState extends State<MemoListPage> {
     Common.pushPage(MemoFormPage(), context: context).then((memoContent) {
       debug('blue:<<<<<', 'MemoList', '<---', 'red:MemoForm', memoContent);
       if (memoContent != null) {
-        setState(() {
-                memoModule.addMemo(memoContent);
-              });
+        addMemo(memoContent);
       }
     });
   }
@@ -117,34 +115,21 @@ class _MemoListPageState extends State<MemoListPage> {
   }
 
   addMemo(String message) async {
-    setState(() {
-      memoModule.addMemo(message);
+    memoModule.addMemo(message).then((_) {
+      setState(() {});
     });
   }
 
   Future<void> modifyMemo(MemoItem memo, [int? index]) async {
-    setState(() {
-      memoModule.modifyMemo(memo, index);
+    memoModule.modifyMemo(memo, index).then((_) {
+      setState(() {});
     });
   }
 
   Future<void> deleteMemo(MemoItem memo, [int? index]) async {
-    setState(() {
-      memoModule.deleteMemo(memo, index);
+    memoModule.deleteMemo(memo, index).then((_) {
+      setState(() {});
     });
-  }
-
-  applyMemo(memo, {bool byMe = false}) {
-    setState(() {
-      if (byMe) {
-        // already done
-      } else {
-        memoModule.addMemo(memo);
-      }
-    });
-    if (!isScrolledDown) {
-      jumpToTop();
-    }
   }
 
   jumpTo(offset, {animate = true}) {
@@ -232,21 +217,33 @@ class _MemoListPageState extends State<MemoListPage> {
 
   Widget buildMemoItem(MemoItem item, int index) {
     return Card(
-      margin: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
       child: ListTile(
         onTap: () {
           // view memo
-          // TODO
-          enterMemoView(item);
+          if (item.memoPassword.isNotEmpty) {
+            Common.confirmPassword('비밀번호를 입력해주십시오.', context: context).then((password) {
+              if (password == null || password.isEmpty || Common.md5(password) != item.memoPassword) {
+                Common.toast('비밀번호가 맞지 않습니다.');
+                return;
+              }
+              enterMemoView(item);
+            });
+          } else {
+            enterMemoView(item);
+          }
         },
         title: Padding(
           padding: const EdgeInsets.only(bottom: 4.0),
           child: Text(
-            item.memoContent,
+            item.memoPassword.isNotEmpty ? '비밀메모 입니다' : item.memoContent,
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
             softWrap: false,
-            style: const TextStyle(fontWeight: FontWeight.w500, height: 2.0),
+            style: TextStyle(
+                fontWeight: FontWeight.w500,
+                height: 2.0,
+                color: item.memoPassword.isNotEmpty ? Colors.black54 : Colors.black87),
           ),
         ),
         trailing: SizedBox(
@@ -262,6 +259,7 @@ class _MemoListPageState extends State<MemoListPage> {
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
+                        item.memoPassword.isNotEmpty ? const Icon(CupertinoIcons.lock) : const SizedBox.shrink(),
                       ],
                     ),
                   ),

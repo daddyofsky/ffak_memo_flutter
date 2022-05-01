@@ -37,33 +37,32 @@ class _MemoFormPageState extends State<MemoFormPage> {
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            border: Border.all(width: 1, color: Colors.black38),
-          ),
           child: Column(children: [
             Expanded(
-              child: TextField(
-                controller: _talkContentController,
-                keyboardType: TextInputType.multiline,
-                decoration: null,
-                maxLines: null,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border.all(width: 1, color: Colors.black38),
+                ),
+                child: TextField(
+                  controller: _talkContentController,
+                  keyboardType: TextInputType.multiline,
+                  decoration: null,
+                  maxLines: null,
+                ),
               ),
             ),
             SizedBox(
-                height: 50,
-                child: IconButton(
+                child: ElevatedButton.icon(
                   onPressed: () {
                     var memoContent = _talkContentController.text.trim();
                     debug(memoContent);
                     Common.popPage(context, memoContent);
                   },
-                  icon: Icon(
-                    Icons.send,
-                    color: isEmptyTalkContent
-                        ? Theme.of(context).primaryColor.withOpacity(0.3)
-                        : Theme.of(context).primaryColor,
-                  ),
-                ))
+                  icon: const Icon(Icons.edit),
+                  label: const Text('등록'),
+                ),
+             )
           ]),
         ),
       ),
