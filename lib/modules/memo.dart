@@ -8,7 +8,7 @@ class MemoModule {
   int memoLength = 0;
   late String today = Common.formatTime(0, 'yMMMMEEEEd');
 
-  Future<int> getMemoList(int count) async {
+  Future<int> getMemoList(int? count) async {
     await db.open();
     var data = await db.findAll(1, '*', 'memo_id DESC', count).catchError((e) {
       Common.error('메모목록 가져오기 오류 : $e');
